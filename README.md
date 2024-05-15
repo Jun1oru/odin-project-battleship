@@ -1,1 +1,1 @@
-# template-repository
+# odin-project-battleship

@@ -1,7 +1,7 @@
 {
-  "name": "template-repository",
-  "version": "1.0.4",
-  "description": "template repository",
+  "name": "odin-project-battleship",
+  "version": "1.0.0",
+  "description": "odin-project-battleship",
   "private": false,
   "scripts": {
     "test": "jest",
