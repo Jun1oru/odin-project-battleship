@@ -1,27 +1,5 @@
-import { Ship, Gameboard, Player } from "../src/index.js";
-
-describe("Ship Class", () => {
-  let ship;
-  beforeEach(() => {
-    ship = new Ship(3);
-  });
-
-  test("Hit function", () => {
-    while (!ship.isSunk()) {
-      ship.hit();
-    }
-    ship.hit();
-    expect(ship.hitCounter).toBe(ship.length);
-  });
-
-  test("isSunk function", () => {
-    expect(ship.isSunk()).toBeFalsy();
-    while (!ship.isSunk()) {
-      ship.hit();
-    }
-    expect(ship.isSunk()).toBeTruthy();
-  });
-});
+import { Gameboard } from "../src/modules/gameBoard";
+import { Ship } from "../src/modules/ship";
 
 describe("Gameboard", () => {
   describe("Place ship at position", () => {
@@ -157,18 +135,5 @@ describe("Gameboard", () => {
 
       expect(input.gameBoard.allShipsSunk()).toBeTruthy();
     });
-  });
-});
-
-describe("Player", () => {
-  const tests = [
-    {
-      playerOne: new Player("real", new Gameboard()),
-      playerTwo: new Player("real", new Gameboard()),
-    },
-  ];
-
-  test("Own gameboard", () => {
-    expect(tests[0].playerOne.board).not.toBe(tests[0].playerTwo.board);
   });
 });
