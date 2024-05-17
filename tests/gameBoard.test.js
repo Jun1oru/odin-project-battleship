@@ -32,6 +32,15 @@ describe("Gameboard", () => {
         expect(input.gameBoard.board[x][y]).toEqual(input.ship);
       });
     });
+
+    test("A ship is already placed there", () => {
+      tests.forEach((input) => {
+        input.gameBoard.place(input.ship, input.position, input.orientation);
+        expect(
+          input.gameBoard.place(input.ship, input.position, input.orientation),
+        ).toBe("try again");
+      });
+    });
   });
 
   describe("receiveAttack function", () => {

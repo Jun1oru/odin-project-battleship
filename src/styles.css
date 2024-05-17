@@ -1,0 +1,93 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 10px;
+}
+
+@media only screen and (min-width: 35.5em) {
+    html {
+        font-size: 12px;
+    }
+}
+
+@media only screen and (min-width: 48em) {
+    html {
+        font-size: 14px;
+    }
+}
+
+@media only screen and (min-width: 64em) {
+    html {
+        font-size: 16px;
+    }
+}
+
+@media only screen and (min-width: 80em) {
+    html {
+        font-size: 18px;
+    }
+}
+
+@media only screen and (min-width: 120em) {
+    html {
+        font-size: 20px;
+    }
+}
+
+@media only screen and (min-width: 160em) {
+    html {
+        font-size: 22px;
+    }
+}
+
+@media only screen and (min-width: 240em) {
+    html {
+        font-size: 24px;
+    }
+}
+
+body {
+    height: 100vh;
+}
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    width: 100%;
+    height: 100%;
+}
+
+.player-container {
+    flex: 1;
+    border: 1px solid red;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.board-container {
+    display: grid;
+}
+
+.cell {
+    border: 1px solid black;
+}
+
+.ship {
+    background-color: blue;
+}
+
+.miss {
+    background-color: black;
+}

@@ -43,14 +43,20 @@ export class Gameboard {
     if (this.isPositionOnBoard(position, ship, orientation)) {
       if (orientation === "horizontal") {
         for (let i = 0; i < this.boardSize; i++) {
-          if (i >= y && i <= y + ship.length - 1) this.board[x][i] = ship;
+          if (i >= y && i <= y + ship.length - 1) {
+            if (this.board[x][i] instanceof Ship) return "try again";
+            this.board[x][i] = ship;
+          }
         }
         ship.position = position;
         ship.orientation = orientation;
         return true;
       } else if (orientation === "vertical") {
         for (let i = 0; i < this.boardSize; i++) {
-          if (i >= x && i <= x + ship.length - 1) this.board[i][y] = ship;
+          if (i >= x && i <= x + ship.length - 1) {
+            if (this.board[i][y] instanceof Ship) return "try again";
+            this.board[i][y] = ship;
+          }
         }
         ship.position = position;
         ship.orientation = orientation;
