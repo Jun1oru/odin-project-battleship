@@ -75,7 +75,12 @@ export class Gameboard {
         this.board[x][y] = "miss";
         return "miss";
       } else if (this.board[x][y] instanceof Ship) {
-        if (this.board[x][y].hitPositions.includes(attackPosition)) {
+        if (this.board[x][y].isSunk() === true) return "sunk";
+        else if (
+          this.board[x][y].hitPositions.some((position) =>
+            position.every((value, index) => value === attackPosition[index]),
+          )
+        ) {
           return "alreadyHit";
         } else {
           this.board[x][y].hit(attackPosition);
