@@ -96,6 +96,14 @@ export function domController() {
     });
   };
 
+  const computerState = {
+    previousMoves: new Set(),
+    hits: [],
+    targets: [],
+    orientation: null,
+    initialHit: null,
+  };
+
   const cellClickHandler = (e) => {
     const cell = e.target;
     const container = cell.parentNode;
@@ -105,7 +113,8 @@ export function domController() {
       const result = gameController.playRound(x, y);
       if (result === "miss") gameController.switchPlayerTurn();
       if (gameController.getActivePlayer().type === "computer") {
-        const computerResult = gameController.playComputerRound();
+        const computerResult = gameController.playComputerRound(computerState);
+        console.log(computerResult);
         gameController.switchPlayerTurn();
       }
       const playerTurn = document.querySelector(".player-turn");

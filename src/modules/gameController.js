@@ -65,27 +65,115 @@ function gameController() {
     return result;
   };
 
-  const playComputerRound = () => {
-    let attackPosition = generateRandomAttack();
-    let result = getActivePlayer().attack(attackPosition);
+  const playComputerRound = (state) => {
+    let result = true;
+    const computer = getActivePlayer();
+    const boardSize = computer.board.boardSize;
+    const { previousMoves, targets, hits, initialHit, orientation } = state;
+
+    const directions = {
+      horizontal: [
+        [0, -1],
+        [0, 1],
+      ],
+      vertical: [
+        [-1, 0],
+        [1, 0],
+      ],
+      all: [
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1],
+      ],
+    };
+
+    const getRandomCoordinates = () => {
+      let x, y;
+      do {
+        x = Math.floor(Math.random() * boardSize);
+        y = Math.floor(Math.random() * boardSize);
+      } while (previousMoves.has(`${x}-${y}`));
+      return [x, y];
+    };
+
+    const getAdjacentCoordinates = (x, y, direction) => {
+      return directions[direction]
+        .map(([dx, dy]) => [x + dx, y + dy])
+        .filter(
+          ([nx, ny]) =>
+            nx >= 0 &&
+            ny >= 0 &&
+            nx < boardSize &&
+            ny < boardSize &&
+            !previousMoves.has(`${nx}-${ny}`),
+        );
+    };
+
     while (
       result === "alreadyHit" ||
       result === "hit" ||
       result === "sunk" ||
       result === true
     ) {
-      attackPosition = generateRandomAttack();
-      result = getActivePlayer().attack(attackPosition);
-      console.log("debug");
+      let x, y;
+      if (targets.length > 0) {
+        [x, y] = targets.shift();
+      } else if (hits.length > 0) {
+        const initial = initialHit || hits[0];
+        let direction = "all";
+
+        if (orientation) {
+          direction = orientation;
+        } else if (hits.length > 1) {
+          const firstHit = hits[0];
+          const secondHit = hits[1];
+          if (firstHit.x === secondHit.x) {
+            state.orientation = "vertical";
+          } else if (firstHit.y === secondHit.y) {
+            state.orientation = "horizontal";
+          }
+          state.initialHit = firstHit;
+          direction = state.orientation || "all";
+        }
+
+        const adjCoordinates = getAdjacentCoordinates(
+          initial.x,
+          initial.y,
+          direction,
+        );
+
+        if (adjCoordinates.length > 0) {
+          [x, y] = adjCoordinates.shift();
+          targets.push(...adjCoordinates);
+        } else {
+          [x, y] = getRandomCoordinates();
+        }
+      } else {
+        [x, y] = getRandomCoordinates();
+      }
+
+      previousMoves.add(`${x}-${y}`);
+      result = playRound(x, y);
+
+      if (result === "hit") {
+        hits.push({ x, y });
+        const newTargets = getAdjacentCoordinates(
+          x,
+          y,
+          state.orientation || "all",
+        );
+        targets.push(...newTargets);
+      } else if (result === "sunk") {
+        hits.length = 0;
+        targets.length = 0;
+        state.orientation = null;
+        state.initialHit = null;
+      }
+
+      if (result === "over") return result;
     }
     return result;
-  };
-
-  const generateRandomAttack = () => {
-    const x = Math.floor(Math.random() * 10),
-      y = Math.floor(Math.random() * 10),
-      attackPosition = [x, y];
-    return attackPosition;
   };
 
   return {
