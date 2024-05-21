@@ -10,21 +10,21 @@ export function domController() {
     const div = document.createElement("div");
     div.id = "game-container";
 
-    const playerTurnTitle = createPlayerTurnTitle();
+    const title = createTitle();
     const playerOneContainer = createPlayerContainer(playerOne);
     const playerTwoContainer = createPlayerContainer(playerTwo);
 
-    div.appendChild(playerTurnTitle);
+    div.appendChild(title);
     div.appendChild(playerOneContainer);
     div.appendChild(playerTwoContainer);
 
     return div;
   };
 
-  const createPlayerTurnTitle = () => {
+  const createTitle = () => {
     const title = document.createElement("h1");
-    title.classList.add("player-turn");
-    title.textContent = "Player One's turn";
+    title.classList.add("game-title");
+    title.textContent = "Battleship";
 
     return title;
   };
@@ -117,8 +117,6 @@ export function domController() {
         console.log(computerResult);
         gameController.switchPlayerTurn();
       }
-      const playerTurn = document.querySelector(".player-turn");
-      playerTurn.textContent = `${gameController.getActivePlayer().name}'s turn`;
       updatePlayerBoard(
         gameController.players[0],
         gameController.players[0].container,
