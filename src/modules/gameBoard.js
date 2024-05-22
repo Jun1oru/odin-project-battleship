@@ -37,33 +37,145 @@ export class Gameboard {
     return horizontalValid && verticalValid;
   }
 
+  isAdjacentShip(position, orientation, length) {
+    const adjacentTop = (x, y) => {
+      if (x > 0) {
+        if (this.board[x - 1][y] instanceof Ship) return true;
+        else if (y > 0 && this.board[x - 1][y - 1] instanceof Ship) return true;
+        else if (
+          y < this.boardSize - 1 &&
+          this.board[x - 1][y + 1] instanceof Ship
+        )
+          return true;
+      }
+      return false;
+    };
+
+    const adjacentRight = (x, y) => {
+      if (y < this.boardSize - 1) {
+        if (this.board[x][y + 1] instanceof Ship) return true;
+        else if (x > 0 && this.board[x - 1][y + 1] instanceof Ship) return true;
+        else if (
+          x < this.boardSize - 1 &&
+          this.board[x + 1][y + 1] instanceof Ship
+        )
+          return true;
+      }
+      return false;
+    };
+
+    const adjacentBottom = (x, y) => {
+      if (x < this.boardSize - 1) {
+        if (this.board[x + 1][y] instanceof Ship) return true;
+        else if (
+          y < this.boardSize - 1 &&
+          this.board[x + 1][y + 1] instanceof Ship
+        )
+          return true;
+        else if (y > 0 && this.board[x + 1][y - 1] instanceof Ship) return true;
+      }
+      return false;
+    };
+
+    const adjacentLeft = (x, y) => {
+      if (y > 0) {
+        if (this.board[x][y - 1] instanceof Ship) return true;
+        else if (x > 0 && this.board[x - 1][y - 1] instanceof Ship) return true;
+        else if (
+          x < this.boardSize - 1 &&
+          this.board[x + 1][y - 1] instanceof Ship
+        )
+          return true;
+      }
+      return false;
+    };
+
+    const startX = position[0],
+      startY = position[1];
+
+    let result = false;
+
+    if (orientation === "horizontal") {
+      for (let i = startY; i <= startY + length - 1; i++) {
+        if (adjacentTop(startX, i) === true) {
+          result = true;
+          break;
+        } else if (adjacentRight(startX, i) === true) {
+          result = true;
+          break;
+        } else if (adjacentBottom(startX, i) === true) {
+          result = true;
+          break;
+        } else if (adjacentLeft(startX, i) === true) {
+          result = true;
+          break;
+        }
+      }
+      return result;
+    } else if (orientation === "vertical") {
+      for (let i = startX; i <= startX + length - 1; i++) {
+        if (adjacentTop(i, startY) === true) {
+          result = true;
+          break;
+        } else if (adjacentRight(i, startY) === true) {
+          result = true;
+          break;
+        } else if (adjacentBottom(i, startY) === true) {
+          result = true;
+          break;
+        } else if (adjacentLeft(i, startY) === true) {
+          result = true;
+          break;
+        }
+      }
+      return result;
+    }
+    return result;
+  }
+
+  canPlaceShip(ship, startX, startY, orientation) {
+    if (orientation === "vertical") {
+      if (startX + ship.length > this.boardSize) return false;
+
+      for (let i = 0; i < ship.length; i++) {
+        if (this.board[startX + i][startY] instanceof Ship) return false;
+        if (
+          this.isAdjacentShip([startX, startY], orientation, ship.length) ===
+          true
+        )
+          return false;
+      }
+    } else {
+      if (startY + ship.length > this.boardSize) return false;
+
+      for (let i = 0; i < ship.length; i++) {
+        if (this.board[startX][startY + i] instanceof Ship) return false;
+        if (
+          this.isAdjacentShip([startX, startY], orientation, ship.length) ===
+          true
+        )
+          return false;
+      }
+    }
+    return true;
+  }
+
   place(ship, position, orientation) {
     let x = position[0],
       y = position[1];
-    if (this.isPositionOnBoard(position, ship, orientation)) {
-      if (orientation === "horizontal") {
-        for (let i = 0; i < this.boardSize; i++) {
-          if (i >= y && i <= y + ship.length - 1) {
-            if (this.board[x][i] instanceof Ship) return "try again";
-            this.board[x][i] = ship;
-          }
-        }
-        ship.position = position;
-        ship.orientation = orientation;
-        return true;
-      } else if (orientation === "vertical") {
-        for (let i = 0; i < this.boardSize; i++) {
-          if (i >= x && i <= x + ship.length - 1) {
-            if (this.board[i][y] instanceof Ship) return "try again";
-            this.board[i][y] = ship;
-          }
-        }
-        ship.position = position;
-        ship.orientation = orientation;
-        return true;
+    if (this.isPositionOnBoard(position, ship, orientation) === false)
+      return false;
+    if (this.canPlaceShip(ship, x, y, orientation) === true) {
+      for (let i = 0; i < ship.length; i++) {
+        if (orientation === "horizontal") this.board[x][y + i] = ship;
+        else this.board[x + i][y] = ship;
       }
+      ship.position = position;
+      ship.orientation = orientation;
+      return true;
+    } else {
+      return "try again";
     }
-    return false;
   }
 
   receiveAttack(attackPosition) {
@@ -84,6 +196,7 @@ export class Gameboard {
           return "alreadyHit";
         } else {
           this.board[x][y].hit(attackPosition);
+          if (this.allShipsSunk() === true) return "over";
           return "hit";
         }
       }
@@ -93,12 +206,17 @@ export class Gameboard {
   }
 
   allShipsSunk() {
+    let result = true;
     for (let i = 0; i < this.boardSize; i++) {
       for (let j = 0; j < this.boardSize; j++) {
-        if (this.board[i][j] instanceof Ship && !this.board[i][j].isSunk())
-          return false;
+        if (
+          this.board[i][j] instanceof Ship &&
+          this.board[i][j].isSunk() === false
+        )
+          result = false;
       }
     }
-    return true;
+    console.log(result);
+    return result;
   }
 }

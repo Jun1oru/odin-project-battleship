@@ -15,7 +15,7 @@ function gameController() {
     const boards = [new Gameboard(), new Gameboard()];
     const players = [
       new Player("real", boards[0], "Player One"),
-      new Player("computer", boards[1], "Player Two"),
+      new Player("computer", boards[1], "Computer"),
     ];
     players.forEach((player, index) => {
       const boardIndex = (index + 1) % boards.length;
@@ -28,7 +28,7 @@ function gameController() {
 
     return players;
   };
-  const players = init();
+  let players = init();
 
   const switchPlayerTurn = () => {
     players.forEach((player) => {
@@ -40,7 +40,6 @@ function gameController() {
     let activePlayer;
     players.forEach((player) => {
       if (player.active === true) {
-        // console.log(player);
         activePlayer = player;
       }
     });
@@ -58,6 +57,58 @@ function gameController() {
     position = [5, 3];
     orientation = "vertical";
     players[1].board.place(ship, position, orientation);
+  };
+
+  const randomGame = () => {
+    let ship, position, orientation;
+    const shipTypes = {
+      AircraftCarrier: {
+        hp: 4,
+        count: 1,
+      },
+      Battleship: {
+        hp: 3,
+        count: 2,
+      },
+      Cruiser: {
+        hp: 2,
+        count: 3,
+      },
+      Submarine: {
+        hp: 1,
+        count: 4,
+      },
+    };
+
+    const randomPosition = (boardSize) => {
+      const x = Math.floor(Math.random() * boardSize),
+        y = Math.floor(Math.random() * boardSize),
+        orientation = Math.random() < 0.5 ? "horizontal" : "vertical";
+      return {
+        x,
+        y,
+        orientation,
+      };
+    };
+
+    players.forEach((player) => {
+      let playerShipTypes = { ...shipTypes };
+      let random;
+      const board = player.board,
+        boardSize = player.board.boardSize;
+      for (const [shipType, attributes] of Object.entries(playerShipTypes)) {
+        for (let i = 0; i < attributes.count; i++) {
+          let result = false;
+          while (result !== true) {
+            ship = new Ship(attributes.hp);
+            random = randomPosition(boardSize);
+            position = [random.x, random.y];
+            orientation = random.orientation;
+            result = board.place(ship, position, orientation);
+          }
+        }
+      }
+    });
   };
 
   const playRound = (x, y) => {
@@ -110,12 +161,7 @@ function gameController() {
         );
     };
 
-    while (
-      result === "alreadyHit" ||
-      result === "hit" ||
-      result === "sunk" ||
-      result === true
-    ) {
+    while (result !== "miss") {
       let x, y;
       if (targets.length > 0) {
         [x, y] = targets.shift();
@@ -164,6 +210,12 @@ function gameController() {
           state.orientation || "all",
         );
         targets.push(...newTargets);
+        if (players[0].board.board[x][y].isSunk() === true) {
+          hits.length = 0;
+          targets.length = 0;
+          state.orientation = null;
+          state.initialHit = null;
+        }
       } else if (result === "sunk") {
         hits.length = 0;
         targets.length = 0;
@@ -182,6 +234,8 @@ function gameController() {
     getActivePlayer,
     switchPlayerTurn,
     definedGame,
+    randomGame,
     players,
+    init,
   };
 }
