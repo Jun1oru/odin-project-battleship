@@ -152,3 +152,8 @@ dialog[open] {
     background-color: rgba(30, 185, 30, 0.747);
     color: whitesmoke;
 }
+
+#gameOverTitle {
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+}

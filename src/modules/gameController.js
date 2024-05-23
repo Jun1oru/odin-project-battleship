@@ -139,15 +139,6 @@ function gameController() {
       ],
     };
 
-    const getRandomCoordinates = () => {
-      let x, y;
-      do {
-        x = Math.floor(Math.random() * boardSize);
-        y = Math.floor(Math.random() * boardSize);
-      } while (previousMoves.has(`${x}-${y}`));
-      return [x, y];
-    };
-
     const getAdjacentCoordinates = (x, y, direction) => {
       return directions[direction]
         .map(([dx, dy]) => [x + dx, y + dy])
@@ -159,6 +150,19 @@ function gameController() {
             ny < boardSize &&
             !previousMoves.has(`${nx}-${ny}`),
         );
+    };
+
+    const getRandomCoordinates = () => {
+      let x, y;
+      const board = computer.enemyBoard;
+      do {
+        x = Math.floor(Math.random() * boardSize);
+        y = Math.floor(Math.random() * boardSize);
+      } while (
+        previousMoves.has(`${x}-${y}`) ||
+        board.isAdjacentShip([x, y]) === "computerAvoid"
+      );
+      return [x, y];
     };
 
     while (result !== "miss") {

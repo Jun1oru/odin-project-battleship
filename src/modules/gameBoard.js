@@ -37,57 +37,154 @@ export class Gameboard {
     return horizontalValid && verticalValid;
   }
 
-  isAdjacentShip(position, orientation, length) {
+  isAdjacentShip(position, orientationParam = null, length = null) {
+    let orientation = orientationParam;
     const adjacentTop = (x, y) => {
-      if (x > 0) {
-        if (this.board[x - 1][y] instanceof Ship) return true;
-        else if (y > 0 && this.board[x - 1][y - 1] instanceof Ship) return true;
-        else if (
-          y < this.boardSize - 1 &&
-          this.board[x - 1][y + 1] instanceof Ship
-        )
-          return true;
+      if (orientation === null) {
+        if (x > 0) {
+          if (
+            this.board[x][y] instanceof Ship &&
+            this.board[x][y].isSunk() === true
+          )
+            return "computerAvoid";
+          else if (
+            y > 0 &&
+            this.board[x - 1][y - 1] instanceof Ship &&
+            this.board[x - 1][y - 1].isSunk() === true
+          )
+            return "computerAvoid";
+          else if (
+            y < this.boardSize - 1 &&
+            this.board[x - 1][y + 1] instanceof Ship &&
+            this.board[x - 1][y + 1].isSunk() === true
+          )
+            return "computerAvoid";
+        }
+        return false;
+      } else {
+        if (x > 0) {
+          if (this.board[x - 1][y] instanceof Ship) return true;
+          else if (y > 0 && this.board[x - 1][y - 1] instanceof Ship)
+            return true;
+          else if (
+            y < this.boardSize - 1 &&
+            this.board[x - 1][y + 1] instanceof Ship
+          )
+            return true;
+        }
+        return false;
       }
-      return false;
     };
 
     const adjacentRight = (x, y) => {
-      if (y < this.boardSize - 1) {
-        if (this.board[x][y + 1] instanceof Ship) return true;
-        else if (x > 0 && this.board[x - 1][y + 1] instanceof Ship) return true;
-        else if (
-          x < this.boardSize - 1 &&
-          this.board[x + 1][y + 1] instanceof Ship
-        )
-          return true;
+      if (orientation === null) {
+        if (y < this.boardSize - 1) {
+          if (
+            this.board[x][y + 1] instanceof Ship &&
+            this.board[x][y + 1].isSunk() === true
+          )
+            return "computerAvoid";
+          else if (
+            x > 0 &&
+            this.board[x - 1][y + 1] instanceof Ship &&
+            this.board[x - 1][y + 1].isSunk() === true
+          )
+            return "computerAvoid";
+          else if (
+            x < this.boardSize - 1 &&
+            this.board[x + 1][y + 1] instanceof Ship &&
+            this.board[x + 1][y + 1].isSunk() === true
+          )
+            return "computerAvoid";
+        }
+        return false;
+      } else {
+        if (y < this.boardSize - 1) {
+          if (this.board[x][y + 1] instanceof Ship) return true;
+          else if (x > 0 && this.board[x - 1][y + 1] instanceof Ship)
+            return true;
+          else if (
+            x < this.boardSize - 1 &&
+            this.board[x + 1][y + 1] instanceof Ship
+          )
+            return true;
+        }
+        return false;
       }
-      return false;
     };
 
     const adjacentBottom = (x, y) => {
-      if (x < this.boardSize - 1) {
-        if (this.board[x + 1][y] instanceof Ship) return true;
-        else if (
-          y < this.boardSize - 1 &&
-          this.board[x + 1][y + 1] instanceof Ship
-        )
-          return true;
-        else if (y > 0 && this.board[x + 1][y - 1] instanceof Ship) return true;
+      if (orientation === null) {
+        if (x < this.boardSize - 1) {
+          if (
+            this.board[x + 1][y] instanceof Ship &&
+            this.board[x + 1][y].isSunk() === true
+          )
+            return "computerAvoid";
+          else if (
+            y < this.boardSize - 1 &&
+            this.board[x + 1][y + 1] instanceof Ship &&
+            this.board[x + 1][y + 1].isSunk() === true
+          )
+            return "computerAvoid";
+          else if (
+            y > 0 &&
+            this.board[x + 1][y - 1] instanceof Ship &&
+            this.board[x + 1][y - 1].isSunk() === true
+          )
+            return "computerAvoid";
+        }
+        return false;
+      } else {
+        if (x < this.boardSize - 1) {
+          if (this.board[x + 1][y] instanceof Ship) return true;
+          else if (
+            y < this.boardSize - 1 &&
+            this.board[x + 1][y + 1] instanceof Ship
+          )
+            return true;
+          else if (y > 0 && this.board[x + 1][y - 1] instanceof Ship)
+            return true;
+        }
+        return false;
       }
-      return false;
     };
 
     const adjacentLeft = (x, y) => {
-      if (y > 0) {
-        if (this.board[x][y - 1] instanceof Ship) return true;
-        else if (x > 0 && this.board[x - 1][y - 1] instanceof Ship) return true;
-        else if (
-          x < this.boardSize - 1 &&
-          this.board[x + 1][y - 1] instanceof Ship
-        )
-          return true;
+      if (orientation === null) {
+        if (y > 0) {
+          if (
+            this.board[x][y - 1] instanceof Ship &&
+            this.board[x][y - 1].isSunk() === true
+          )
+            return "computerAvoid";
+          else if (
+            x > 0 &&
+            this.board[x - 1][y - 1] instanceof Ship &&
+            this.board[x - 1][y - 1].isSunk() === true
+          )
+            return "computerAvoid";
+          else if (
+            x < this.boardSize - 1 &&
+            this.board[x + 1][y - 1] instanceof Ship &&
+            this.board[x + 1][y - 1].isSunk() === true
+          )
+            return "computerAvoid";
+        }
+        return false;
+      } else {
+        if (y > 0) {
+          if (this.board[x][y - 1] instanceof Ship) return true;
+          else if (x > 0 && this.board[x - 1][y - 1] instanceof Ship)
+            return true;
+          else if (
+            x < this.boardSize - 1 &&
+            this.board[x + 1][y - 1] instanceof Ship
+          )
+            return true;
+        }
+        return false;
       }
-      return false;
     };
 
     const startX = position[0],
@@ -95,7 +192,17 @@ export class Gameboard {
 
     let result = false;
 
-    if (orientation === "horizontal") {
+    if (orientation === null) {
+      if (adjacentTop(startX, startY) === "computerAvoid")
+        result = "computerAvoid";
+      else if (adjacentRight(startX, startY) === "computerAvoid")
+        result = "computerAvoid";
+      else if (adjacentBottom(startX, startY) === "computerAvoid")
+        result = "computerAvoid";
+      else if (adjacentLeft(startX, startY) === "computerAvoid")
+        result = "computerAvoid";
+      return result;
+    } else if (orientation === "horizontal") {
       for (let i = startY; i <= startY + length - 1; i++) {
         if (adjacentTop(startX, i) === true) {
           result = true;
@@ -216,7 +323,6 @@ export class Gameboard {
           result = false;
       }
     }
-    console.log(result);
     return result;
   }
 }

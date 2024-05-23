@@ -140,9 +140,7 @@ export function domController() {
       if (result === "over") {
         dialog.show();
         gameOverTitle.textContent = `Game over, you won!`;
-        // const winner = gameController.players[0];
-        // winner.container.innerHTML = "Winner";
-        // container.innerHTML = "Loser";
+        gameOverTitle.style.color = "green";
 
         return;
       } else {
@@ -150,12 +148,10 @@ export function domController() {
         if (gameController.getActivePlayer().type === "computer") {
           const computerResult =
             gameController.playComputerRound(computerState);
-          if (result === "over") {
+          if (computerResult === "over") {
             dialog.show();
             gameOverTitle.textContent = `Game over, you lost!`;
-            // const winner = gameController.players[1];
-            // winner.container.innerHTML = "Winner";
-            // gameController.players[0].container.innerHTML = "Loser";
+            gameOverTitle.style.color = "red";
 
             return;
           }
